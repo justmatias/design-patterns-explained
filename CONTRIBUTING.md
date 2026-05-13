@@ -6,73 +6,82 @@ Thank you for your interest in contributing to this project! Here are some guide
 
 1. **Fork the repository**: Click the "Fork" button at the top right corner of the repository page to create a copy of the repository in your GitHub account.
 
-2. **Clone the repository**: Clone your forked repository to your local machine using the following command:
+2. **Clone the repository**: Clone your forked repository to your local machine:
 
     ```sh
-    git clone https://github.com/matiagimenez/design-patterns-explained.git
+    git clone https://github.com/justmatias/design-patterns-explained.git
     cd design-patterns-explained
     ```
 
-3. **Install Pipenv**: If you don't have Pipenv installed, you can install it using pip:
+3. **Install uv**: If you don't have uv installed, follow the [official installation guide](https://docs.astral.sh/uv/getting-started/installation/).
+
+4. **Install dependencies**:
 
     ```sh
-    pip install pipenv
+    uv sync --group dev
     ```
 
-4. **Install dependencies**: Navigate to the root directory of the repository and install the required dependencies:
+5. **Install pre-commit hooks**:
 
     ```sh
-    pipenv install --dev
-    ```
-
-5. **Activate the virtual environment**:
-    ```sh
-    pipenv shell
+    uv run pre-commit install
     ```
 
 ## Running Pre-Commit Hooks
 
-This repository uses pre-commit hooks to ensure code quality and consistency. To set up pre-commit hooks, follow these steps:
+Run all hooks manually at any time with:
 
-1. **Install the pre-commit hooks**:
+```sh
+uv run poe format
+```
 
-    ```sh
-    pre-commit install
-    ```
+This runs codespell, pyupgrade, ruff, pylint, and mypy across the entire codebase.
 
-2. **Run the pre-commit hooks manually** (optional):
-    ```sh
-    pipenv run format
-    ```
+## Project Structure
+
+Patterns are organized by category. Each pattern lives in its own folder containing:
+
+```
+creational/
+├── builder/
+│   ├── builder.py       # real-world example
+│   ├── conceptual.py    # abstract/generic implementation
+│   └── index.md         # documentation page
+├── singleton/
+│   └── ...
+└── prototype/
+    └── ...
+```
+
+When adding a new pattern, follow the same structure and use `template.md` as a starting point for the documentation page.
 
 ## Making Changes
 
-1. **Create a new branch**: Create a new branch for your changes:
+1. **Create a new branch**:
 
     ```sh
     git checkout -b <branch-name>
     ```
 
-2. **Make your changes**: Make your changes to the codebase.
+2. **Make your changes** following the project structure above.
 
-3. **Commit your changes**: Commit your changes with a descriptive commit message:
+3. **Commit your changes** with a descriptive commit message:
 
     ```sh
     git add .
     git commit -m "Description of the changes"
     ```
 
-4. **Push your changes**: Push your changes to your forked repository:
+4. **Push your changes**:
 
     ```sh
     git push origin <branch-name>
     ```
 
-5. **Create a pull request**: Go to the original repository and create a pull request from your forked repository. Provide a clear description of your changes and any relevant information.
+5. **Create a pull request**: Go to the original repository and open a pull request with a clear description of your changes.
 
 ## Code Style
 
-Please ensure that your code adheres to the following guidelines:
-
--   Use meaningful variable, function and class names.
--   Ensure that your changes follow the project structure used in the repository.
+- Use meaningful variable, function, and class names.
+- All hooks must pass (`uv run poe format`) before submitting a pull request.
+- Follow the existing pattern structure when adding new patterns.

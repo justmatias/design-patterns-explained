@@ -2,19 +2,22 @@
 
 To run the code examples in this repository, follow these steps:
 
-1. **Install Pipenv**: If you don't have Pipenv installed, you can install it using pip.
-
-    ```sh
-    pip install pipenv
-    ```
+1. **Install uv**: If you don't have uv installed, follow the [official installation guide](https://docs.astral.sh/uv/getting-started/installation/).
 
 2. **Install dependencies**: Navigate to the root directory of the repository and install the required dependencies.
 
     ```sh
-    pipenv install --dev
+    uv sync --group dev
     ```
 
-3. **Run the example**: Use the following command to run a specific design pattern example. Replace `<pattern_name>` with the name of the pattern you want to execute.
+3. **Run the example**: Use the following command to run a specific design pattern example. Replace `<category>` and `<pattern_name>` with the pattern you want to execute.
+
     ```sh
-    pipenv run start <pattern_name>
+    uv run python creational/<pattern_name>/<pattern_name>.py
+    ```
+
+    For example, to run the Singleton example:
+
+    ```sh
+    uv run python creational/singleton/singleton.py
     ```
