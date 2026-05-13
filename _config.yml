@@ -7,10 +7,16 @@ url: https://justmatias.github.io
 baseurl: /design-patterns-explained
 
 aux_links:
-  'GitHub':
+  'Repository':
     - 'https://github.com/justmatias/design-patterns-explained'
+  'GitHub':
+    - 'https://github.com/justmatias'
+  'LinkedIn':
+    - 'https://www.linkedin.com/in/matiagimenez'
 
 nav_sort: order
 
 exclude:
   - README.md
+  - CONTRIBUTING.md
+  - docs/
