@@ -17,7 +17,7 @@ class Settings:
     def get_instance(cls, settings: dict[str, Any]) -> Self:
         if cls._instance is None:
             cls._instance = cls(settings)
-        return cls._instance  # type: ignore[no-any-return]
+        return cls._instance
 
 
 settings = Settings.get_instance({"db": "postgres", "debug": True})

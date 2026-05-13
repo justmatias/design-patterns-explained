@@ -5,9 +5,24 @@ description = "A comprehensive repository for documenting, explaining, and demon
 authors = [{ name = "Matias Gimenez", email = "matiasgimenez.dev@gmail.com" }]
 readme = "README.md"
 license = { text = "MIT" }
+requires-python = ">=3.12"
 
 [project.urls]
-Repository = "https://github.com/matiagimenez/design-patterns-explained"
+Repository = "https://github.com/justmatias/design-patterns-explained"
+
+[dependency-groups]
+dev = [
+    "pre-commit==4.1.0",
+    "ruff==0.9.6",
+    "pylint==3.3.4",
+    "mypy==2.1.0",
+    "codespell==2.4.1",
+    "pyupgrade==3.19.1",
+    "poethepoet==0.34.0",
+]
+
+[tool.poe.tasks]
+format = "pre-commit run --all-files"
 
 
 ######################

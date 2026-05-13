@@ -15,7 +15,7 @@ class Singleton:
     def get_instance(cls) -> Self:
         if cls._instance is None:
             cls._instance = cls()
-        return cls._instance  # type: ignore[no-any-return]
+        return cls._instance
 
 
 variable = Singleton.get_instance()
