@@ -1,6 +1,6 @@
 title: Design Patterns in Python
 description: Documentation and examples for common design patterns implemented in Python.
-theme: just-the-docs
+remote_theme: just-the-docs/just-the-docs
 
 url: https://justmatias.github.io/design-patterns-explained
 
