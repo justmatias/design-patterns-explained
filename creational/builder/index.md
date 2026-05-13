@@ -22,7 +22,7 @@ The **builder** pattern solves this problem by abstracting the construction proc
 
 Without the **builder** pattern, you might end up with a constructor that takes numerous parameters, leading to confusing and complex code.
 
-Implementating the **builder** pattern, keeps encapsulated the code for construction, allowing you to vary a product's internal representation.
+Implementing the **builder** pattern keeps encapsulated the code for construction, allowing you to vary a product's internal representation.
 
 The main drawback of the **builder** pattern is that requires creating a concrete builder for each unique configuration of the "product".
 
