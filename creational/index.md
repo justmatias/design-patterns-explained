@@ -6,7 +6,12 @@ has_children: true
 
 # Creational Patterns
 
+![Category](https://img.shields.io/badge/category-creational-blue)
+![Patterns](https://img.shields.io/badge/patterns-3-success)
+![Language](https://img.shields.io/badge/language-Python-yellow)
+
 Creational patterns provide various object creation mechanisms, which increase flexibility and reuse of existing code.
+
 
 | # | Name | Description |
 |:-:|------|-------------|

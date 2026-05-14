@@ -48,12 +48,12 @@ The **prototype** pattern typically involves the following components.
 
 ## Benefits and Trade-offs
 
-- ✅ Reduces cost of creating complex objects.
-- ✅ Keeps object initialization logic consistent.
-- ✅ Allows runtime object configuration and dynamic instantiation.
-- ✅ Simplifies object creation when constructors are complicated.
-- ❌ Must carefully handle _deep_ vs _shallow_ copy to avoid bugs.
-- ❌ Cloning objects with external dependencies can cause issues.
+- ✓ Reduces cost of creating complex objects.
+- ✓ Keeps object initialization logic consistent.
+- ✓ Allows runtime object configuration and dynamic instantiation.
+- ✓ Simplifies object creation when constructors are complicated.
+- ✗ Must carefully handle _deep_ vs _shallow_ copy to avoid bugs.
+- ✗ Cloning objects with external dependencies can cause issues.
 
 ## References
 

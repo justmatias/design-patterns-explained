@@ -16,7 +16,7 @@ It provides an elegant solution to the problem of creating complex objects with 
 
 Imagine you have a class that includes in its behaviour the creation of a complex object, with various configurations.
 
-#### How this class can be _simplified_?
+> **How this class can be _simplified_?**
 
 The **builder** pattern solves this problem by abstracting the construction process into separate classes, resulting in cleaner and more maintainable code. In other words, applying the pattern means following the _separation of concerns_ principle, separating the construction process from the products internal structure.
 
@@ -25,6 +25,7 @@ Without the **builder** pattern, you might end up with a constructor that takes 
 Implementing the **builder** pattern keeps encapsulated the code for construction, allowing you to vary a product's internal representation.
 
 The main drawback of the **builder** pattern is that requires creating a concrete builder for each unique configuration of the "product".
+
 
 ## How to recognize a builder pattern implementation?
 
@@ -38,6 +39,7 @@ Consider a restaurant. The creation of "today's meal" is a factory pattern, beca
 
 The **builder** appears if you order a custom pizza. In this case, the waiter tells the chef (builder) "I need a pizza; add cheese, onions and bacon to it!" Thus, the builder exposes the attributes the generated object should have, but hides how to set them.
 
+
 ## How to know if you can apply the pattern in your project?
 
 A **builder** is useful when constructing an object requires multiple steps, especially when many parameters are involved, some of which may be optional.
@@ -47,6 +49,7 @@ In such cases, using a class constructor can become confusing, as handling numer
 The builder pattern addresses this by allowing parameters to be set step by step before returning a fully constructed object. While this approach requires a _concrete builder_ implementation for each parameter combination, it ensures a consistent and valid object representation.
 
 Another advantage of builders is handling complex object initialization, where method calls must follow a specific sequence and intermediate objects need to be generated. Attempting to manage this within a constructor can be a real pain, and relying on a separate initialization method that one must remember to call is error-prone. Delegating construction to a **builder** simplifies this process by ensuring the object transitions through the necessary states in a controlled manner.
+
 
 ## Key components
 
@@ -60,21 +63,55 @@ The **builder** pattern typically involves the following components.
 
 - **Director**. Coordinates the construction process using the builder interface. It knows the specific order and combination of steps required to build the product. The Director is only responsible for executing the building steps in a particular sequence. The Director works with any builder instance that the client code passes to it.
 
-#### Strictly speaking, the director class is optional, since the client can control builders directly.
+{: .note }
+
+> **Strictly speaking, the director class is optional, since the client can control builders directly.**
+
 
 ## Benefits and Trade-offs
 
-- ✅ More control over the construction process compared to other creational patterns.
-- ✅ Supports constructing objects step-by-step.
-- ✅ Can construct objects that require a complex assembly of sub-objects.
-- ✅ Single Responsibility Principle. You can isolate complex construction code from the business logic of the product.
-- ❌ The overall complexity of the code can increase since the pattern requires creating multiple new classes.
+- ✓ More control over the construction process compared to other creational patterns.
+- ✓ Supports constructing objects step-by-step.
+- ✓ Can construct objects that require a complex assembly of sub-objects.
+- ✓ Single Responsibility Principle. You can isolate complex construction code from the business logic of the product.
+- ✗ The overall complexity of the code can increase since the pattern requires creating multiple new classes.
+
 
 ## Examples
 
 ### Conceptual
 
 A minimal implementation showing all components — `Product`, `Builder` interface, `ConcreteBuilder`, and `Director`.
+
+<details markdown="1">
+<summary>Show class diagram</summary>
+
+```mermaid
+classDiagram
+    direction LR
+    class Director {
+        -builder: Builder
+        +construct()
+    }
+    class Builder {
+        <<interface>>
+        +build_part_a()
+        +build_part_b()
+        +get_product()
+    }
+    class ConcreteBuilder {
+        -product: Product
+        +build_part_a()
+        +build_part_b()
+        +get_product()
+    }
+    class Product
+    Director o--> Builder : uses
+    Builder <|.. ConcreteBuilder : implements
+    ConcreteBuilder ..> Product : creates
+```
+
+</details>
 
 ```python
 from abc import ABC, abstractmethod
@@ -145,24 +182,6 @@ class Director:
         self.builder.produce_part_b()
         self.builder.produce_part_c()
 
-
-if __name__ == "__main__":
-    builder = ConcreteBuilder()
-    director = Director(builder)
-
-    print("Standard basic product: ")
-    director.build_minimal_viable_product()
-    print(f"Product: {builder.product}")  # Product(parts=["Part A1"])
-
-    print("Standard full featured product: ")
-    director.build_full_featured_product()
-    print(builder.product)  # Product(parts=["Part A1", "Part B1", "Part C1"])
-
-    # The Builder pattern can be used without a Director class.
-    print("Custom product: ")
-    builder.produce_part_a()
-    builder.produce_part_b()
-    print(builder.product)  # Product(parts=["Part A1", "Part B1"])
 ```
 
 ### Real-world

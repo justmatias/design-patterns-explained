@@ -50,12 +50,12 @@ The **singleton** pattern typically involves the following components.
 
 ## Benefits and Trade-offs
 
-- ✅ Single point of access making easier to retrieve the instance anywhere in the app.
-- ✅ Guarantees consistency with a shared state — everyone sees the same data.
-- ✅ Resource control for expensive objects.
-- ✅ The instance can be created only when first requested, saving resources - This is called _Lazy initialization_.
-- ❌ Code can depend on the singleton without being obvious, reducing modularity - Hidden dependencies (like globals).
-- ❌ The class both does its main job and enforces uniqueness, violating of _Single Responsibility Principle_.
+- ✓ Single point of access making easier to retrieve the instance anywhere in the app.
+- ✓ Guarantees consistency with a shared state — everyone sees the same data.
+- ✓ Resource control for expensive objects.
+- ✓ The instance can be created only when first requested, saving resources - This is called _Lazy initialization_.
+- ✗ Code can depend on the singleton without being obvious, reducing modularity - Hidden dependencies (like globals).
+- ✗ The class both does its main job and enforces uniqueness, violating of _Single Responsibility Principle_.
 
 ## References
 

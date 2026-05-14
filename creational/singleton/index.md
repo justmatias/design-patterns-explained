@@ -10,13 +10,17 @@ The **Singleton** pattern ensures that only one object of its kind exists and pr
 
 ![singleton](https://github.com/user-attachments/assets/fe89cab8-db18-4276-b10a-c8bbe9db0c7a)
 
+
 ## Introduction
 
-#### Why would anyone want to control how many instances a class has?
+{: .highlight }
+
+> **Why would anyone want to control how many instances a class has?**
 
 The most common reason for this is to control access to some shared resource — for example, a database or a file.
 
 Just like a global variable, the **Singleton** pattern lets you access some object from anywhere in the program. However, it also protects that instance from being overwritten by other code.
+
 
 ## How to recognize a singleton pattern implementation?
 
@@ -32,6 +36,7 @@ A great real-world analogy is a central bank. Every country has only one central
 
 Similarly, in software design, the **Singleton** pattern ensures that a class has only one instance and provides a single, global point of access to it, preventing the creation of multiple instances that could disrupt system consistency.
 
+
 ## How to know if you can apply the pattern in your project?
 
 You can consider it if you need:
@@ -41,6 +46,7 @@ You can consider it if you need:
 2. A global point of access: You want different parts of the system to use the same object without passing it around manually. Example: `Logger.get_instance().log("msg")` can be called from anywhere.
 
 3. Consistency of state: the instance maintains critical shared state that must be consistent across the app.
+
 
 ## Key components
 
@@ -54,20 +60,38 @@ The **singleton** pattern typically involves the following components.
 
 - **Thread Safety (optional)**: in multi-threaded programs, you need a lock to avoid creating multiple instances simultaneously.
 
+
 ## Benefits and Trade-offs
 
-- ✅ Single point of access making easier to retrieve the instance anywhere in the app.
-- ✅ Guarantees consistency with a shared state — everyone sees the same data.
-- ✅ Resource control for expensive objects.
-- ✅ The instance can be created only when first requested, saving resources - This is called _Lazy initialization_.
-- ❌ Code can depend on the singleton without being obvious, reducing modularity - Hidden dependencies (like globals).
-- ❌ The class both does its main job and enforces uniqueness, violating of _Single Responsibility Principle_.
+- ✓ Single point of access making easier to retrieve the instance anywhere in the app.
+- ✓ Guarantees consistency with a shared state — everyone sees the same data.
+- ✓ Resource control for expensive objects.
+- ✓ The instance can be created only when first requested, saving resources - This is called _Lazy initialization_.
+- ✗ Code can depend on the singleton without being obvious, reducing modularity - Hidden dependencies (like globals).
+- ✗ The class both does its main job and enforces uniqueness, violating of _Single Responsibility Principle_.
+
 
 ## Examples
 
 ### Conceptual
 
 A minimal implementation enforcing a single instance via `get_instance()` and raising an error on direct instantiation.
+
+<details markdown="1">
+<summary>Show class diagram</summary>
+
+```mermaid
+classDiagram
+    direction LR
+    class Singleton {
+        -instance: Singleton$
+        -__init__()
+        +get_instance()$ Singleton
+    }
+    Singleton --> Singleton : holds single instance
+```
+
+</details>
 
 ```python
 from dataclasses import dataclass, field
@@ -124,6 +148,7 @@ class Settings:
 settings = Settings.get_instance({"db": "postgres", "debug": True})
 settings_2 = Settings.get_instance({"db": "mysql", "debug": False})
 ```
+
 
 ## References
 
