@@ -26,7 +26,6 @@ Implementing the **builder** pattern keeps encapsulated the code for constructio
 
 The main drawback of the **builder** pattern is that requires creating a concrete builder for each unique configuration of the "product".
 
-
 ## How to recognize a builder pattern implementation?
 
 The **builder** pattern can be recognized in a class, which has a _single creation method_ and _several methods to configure_ the resulting object. **Builder class methods often support chaining**.
@@ -39,7 +38,6 @@ Consider a restaurant. The creation of "today's meal" is a factory pattern, beca
 
 The **builder** appears if you order a custom pizza. In this case, the waiter tells the chef (builder) "I need a pizza; add cheese, onions and bacon to it!" Thus, the builder exposes the attributes the generated object should have, but hides how to set them.
 
-
 ## How to know if you can apply the pattern in your project?
 
 A **builder** is useful when constructing an object requires multiple steps, especially when many parameters are involved, some of which may be optional.
@@ -49,7 +47,6 @@ In such cases, using a class constructor can become confusing, as handling numer
 The builder pattern addresses this by allowing parameters to be set step by step before returning a fully constructed object. While this approach requires a _concrete builder_ implementation for each parameter combination, it ensures a consistent and valid object representation.
 
 Another advantage of builders is handling complex object initialization, where method calls must follow a specific sequence and intermediate objects need to be generated. Attempting to manage this within a constructor can be a real pain, and relying on a separate initialization method that one must remember to call is error-prone. Delegating construction to a **builder** simplifies this process by ensuring the object transitions through the necessary states in a controlled manner.
-
 
 ## Key components
 
@@ -63,10 +60,7 @@ The **builder** pattern typically involves the following components.
 
 - **Director**. Coordinates the construction process using the builder interface. It knows the specific order and combination of steps required to build the product. The Director is only responsible for executing the building steps in a particular sequence. The Director works with any builder instance that the client code passes to it.
 
-{: .note }
-
 > **Strictly speaking, the director class is optional, since the client can control builders directly.**
-
 
 ## Benefits and Trade-offs
 
@@ -75,7 +69,6 @@ The **builder** pattern typically involves the following components.
 - ✓ Can construct objects that require a complex assembly of sub-objects.
 - ✓ Single Responsibility Principle. You can isolate complex construction code from the business logic of the product.
 - ✗ The overall complexity of the code can increase since the pattern requires creating multiple new classes.
-
 
 ## Examples
 
@@ -113,24 +106,24 @@ classDiagram
 
 </details>
 
+<br>
+
 ```python
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 
-
 @dataclass
 class Product:
-    parts: list[str] = field(default_factory=list)
+parts: list[str] = field(default_factory=list)
 
     def add(self, part: str) -> None:
         self.parts.append(part)
 
-
 class Builder(ABC):
-    @property
-    @abstractmethod
-    def product(self) -> Product:
-        pass
+@property
+@abstractmethod
+def product(self) -> Product:
+pass
 
     @abstractmethod
     def produce_part_a(self) -> None:
@@ -144,9 +137,8 @@ class Builder(ABC):
     def produce_part_c(self) -> None:
         pass
 
-
 class ConcreteBuilder(Builder):
-    _product: Product
+\_product: Product
 
     def __init__(self) -> None:
         self.reset()
@@ -169,10 +161,9 @@ class ConcreteBuilder(Builder):
     def produce_part_c(self) -> None:
         self._product.add("Part C1")
 
-
 @dataclass
 class Director:
-    builder: Builder
+builder: Builder
 
     def build_minimal_viable_product(self) -> None:
         self.builder.produce_part_a()
