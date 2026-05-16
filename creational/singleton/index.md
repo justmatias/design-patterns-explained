@@ -8,7 +8,7 @@ nav_order: 2
 
 The **Singleton** pattern ensures that only one object of its kind exists and provides a single point of access to it for any other code. For achieving this, you have to restrict the instantiation of a class.
 
-![singleton](https://github.com/user-attachments/assets/fe89cab8-db18-4276-b10a-c8bbe9db0c7a)
+![singleton](assets/singleton.png)
 
 ## Introduction
 
@@ -120,29 +120,20 @@ print(variable is another_variable)  # True
 An application `Settings` store that guarantees only one configuration object exists across the entire app, regardless of how many times `get_instance()` is called.
 
 ```python
-from dataclasses import dataclass, field
-from typing import Any, Self
+from typing import Any, ClassVar, Self
+
+from pydantic import BaseModel, Field
 
 
-@dataclass
-class Settings:
-    _instance: Self | None = field(default=None)
-    settings: dict[str, Any] = field(default_factory=dict)
-
-    def __init__(self, settings: dict[str, Any]):
-        if self._instance is not None:
-            raise RuntimeError("Use get_instance() instead of creating Settings directly")
-        self.settings = settings or {}
+class Settings(BaseModel):
+    instance: ClassVar[Self | None] = None
+    settings: dict[str, Any] = Field(default_factory=dict)
 
     @classmethod
-    def get_instance(cls, settings: dict[str, Any]) -> Self:
-        if cls._instance is None:
-            cls._instance = cls(settings)
-        return cls._instance  # type: ignore[no-any-return]
-
-
-settings = Settings.get_instance({"db": "postgres", "debug": True})
-settings_2 = Settings.get_instance({"db": "mysql", "debug": False})
+    def get_settings(cls, settings: dict[str, Any]) -> Self:
+        if cls.instance is None:
+            cls.instance = cls(settings=settings)
+        return cls.instance
 ```
 
 ## References

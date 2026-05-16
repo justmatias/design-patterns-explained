@@ -1,3 +1,9 @@
+# How to preview the documentation
+
+The docs site is automatically deployed as a preview for every pull request. Once a PR is opened, a GitHub Actions workflow builds the site and deploys it to Cloudflare Pages. A bot will post a comment on the PR with the preview URL — no extra steps needed.
+
+The preview reflects the exact state of the branch and updates on every new commit. It has no effect on the production site hosted on GitHub Pages.
+
 # How to execute code examples
 
 To run the code examples in this repository, follow these steps:
@@ -13,7 +19,7 @@ To run the code examples in this repository, follow these steps:
 3. **Run the example**: Use the following command to run a specific design pattern example. Replace `<category>` and `<pattern_name>` with the pattern you want to execute.
 
     ```sh
-    uv run python creational/<pattern_name>/<pattern_name>.py
+    uv run python <category>/<pattern_name>/<pattern_name>.py
     ```
 
     For example, to run the Singleton example:

@@ -1,27 +1,27 @@
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
-from enum import Enum, auto
+from enum import StrEnum
 from typing import Self
 
-
-class Engine(Enum):
-    GAS = auto()
-    DIESEL = auto()
+from pydantic import BaseModel
 
 
-class Chassis(Enum):
-    TAXI = auto()
-    SPORTS_CAR = auto()
+class Engine(StrEnum):
+    GAS = "gas"
+    DIESEL = "diesel"
 
 
-class Color(Enum):
-    RED = auto()
-    YELLOW = auto()
-    BLACK = auto()
+class Chassis(StrEnum):
+    TAXI = "taxi"
+    SPORTS_CAR = "sports_car"
 
 
-@dataclass
-class Car:
+class Color(StrEnum):
+    RED = "red"
+    YELLOW = "yellow"
+    BLACK = "black"
+
+
+class Car(BaseModel):
     engine: Engine
     chassis: Chassis
     wheels: int
@@ -42,12 +42,10 @@ class CarBuilder(ABC):
         return self.car
 
     @abstractmethod
-    def with_gps(self) -> Self:
-        pass
+    def with_gps(self) -> Self: ...
 
     @abstractmethod
-    def with_color(self, color: Color) -> Self:
-        pass
+    def with_color(self, color: Color) -> Self: ...
 
 
 class TaxiBuilder(CarBuilder):
