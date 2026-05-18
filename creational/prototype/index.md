@@ -66,9 +66,6 @@ The **prototype** pattern typically involves the following components.
 
 A minimal `Prototype` base class exposing a `clone()` method backed by `copy.deepcopy`, and a `ConcretePrototype` that inherits it.
 
-<details markdown="1">
-<summary>Show class diagram</summary>
-
 ```mermaid
 classDiagram
     direction LR
@@ -91,9 +88,8 @@ classDiagram
     Client o--> Prototype : clones
 ```
 
-</details>
-
-<br>
+<details markdown="1">
+<summary>Show conceptual implementation</summary>
 
 ```python
 import copy
@@ -121,6 +117,8 @@ print("Original: ", original)
 print("Clone: ", clone)
 print("Are objects the same?", original is clone)  # False
 ```
+
+</details>
 
 ### Real-world
 

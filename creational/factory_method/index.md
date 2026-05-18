@@ -66,8 +66,6 @@ The **Factory Method** pattern typically involves the following components.
 
 A minimal `Creator` with an abstract `create_product()` factory method, and two concrete creators each returning a different product.
 
-<details markdown="1">
-<summary>Show class diagram</summary>
 ```mermaid
 classDiagram
     direction LR
@@ -99,9 +97,8 @@ classDiagram
     Product <|.. ConcreteProductB
 ```
 
-</details>
-
-<br>
+<details markdown="1">
+<summary>Show conceptual implementation</summary>
 
 ```python
 from abc import ABC, abstractmethod
@@ -140,6 +137,8 @@ class ConcreteCreatorB(Creator):
     def create_product(self) -> Product:
         return ConcreteProductB()
 ```
+
+</details>
 
 ### Real-world
 

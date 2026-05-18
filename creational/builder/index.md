@@ -76,9 +76,6 @@ The **builder** pattern typically involves the following components.
 
 A minimal implementation showing all components — `Product`, `Builder` interface, `ConcreteBuilder`, and `Director`.
 
-<details markdown="1">
-<summary>Show class diagram</summary>
-
 ```mermaid
 classDiagram
     direction LR
@@ -104,9 +101,8 @@ classDiagram
     ConcreteBuilder ..> Product : creates
 ```
 
-</details>
-
-<br>
+<details markdown="1">
+<summary>Show conceptual implementation</summary>
 
 ```python
 from abc import ABC, abstractmethod
@@ -170,6 +166,8 @@ builder: Builder
         self.builder.produce_part_c()
 
 ```
+
+</details>
 
 ### Real-world
 

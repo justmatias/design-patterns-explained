@@ -71,9 +71,6 @@ The **singleton** pattern typically involves the following components.
 
 A minimal implementation enforcing a single instance via `get_instance()` and raising an error on direct instantiation.
 
-<details markdown="1">
-<summary>Show class diagram</summary>
-
 ```mermaid
 classDiagram
     direction LR
@@ -85,9 +82,8 @@ classDiagram
     Singleton --> Singleton : holds single instance
 ```
 
-</details>
-
-<br>
+<details markdown="1">
+<summary>Show conceptual implementation</summary>
 
 ```python
 from dataclasses import dataclass, field
@@ -114,6 +110,8 @@ another_variable = Singleton.get_instance()
 
 print(variable is another_variable)  # True
 ```
+
+</details>
 
 ### Real-world
 
