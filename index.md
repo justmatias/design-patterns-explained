@@ -11,13 +11,13 @@ The concept was popularized by the **Gang of Four** (Erich Gamma, Richard Helm, 
 
 Understanding design patterns makes you a better communicator too. When a teammate says "let's use a Factory here," everyone on the team instantly shares the same mental model, no lengthy explanation needed.
 
-## Creational Patterns
+## [Creational Patterns](./creational/)
 
 - [Builder](./creational/builder/) — Construction of complex or multi-representational objects
 - [Singleton](./creational/singleton/) — Only one existing instance of a class
 - [Prototype](./creational/prototype/) — Create new objects by copying an existing object
 - [Factory Method](./creational/factory-method/) — Delegate object creation to subclasses via a factory method
 
-## Structural Patterns
+## [Structural Patterns](./structural/)
 
-## Behavioral Patterns
+## [Behavioral Patterns](./behavioral/)
