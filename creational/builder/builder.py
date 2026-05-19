@@ -1,100 +1,123 @@
 from abc import ABC, abstractmethod
+from datetime import UTC, datetime
 from enum import StrEnum
-from typing import Self
+from typing import Any, Self
+from uuid import UUID, uuid4
 
-from pydantic import BaseModel
-
-
-class Engine(StrEnum):
-    GAS = "gas"
-    DIESEL = "diesel"
+from pydantic import BaseModel, Field
 
 
-class Chassis(StrEnum):
-    TAXI = "taxi"
-    SPORTS_CAR = "sports_car"
+class EventType(StrEnum):
+    ORDER_PLACED = "OrderPlaced"
+    PAYMENT_CAPTURED = "PaymentCaptured"
 
 
-class Color(StrEnum):
-    RED = "red"
-    YELLOW = "yellow"
-    BLACK = "black"
-
-
-class Car(BaseModel):
-    engine: Engine
-    chassis: Chassis
-    wheels: int
-    color: Color | None = Color.BLACK
-    gps: bool | None = False
+class Event(BaseModel):
+    event_type: EventType
+    payload: dict[str, Any]
+    event_id: UUID = Field(default_factory=uuid4)
+    occurred_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    source: str
+    correlation_id: str | None = None
+    causation_id: UUID | None = None
+    schema_version: int = 1
+    metadata: dict[str, str] = Field(default_factory=dict)
 
     def __str__(self) -> str:
         return (
-            f"Car with engine: {self.engine}, chassis: {self.chassis}, "
-            f"wheels: {self.wheels}, color: {self.color}, gps: {self.gps}"
+            f"{self.event_type} (id={self.event_id}, source={self.source}, "
+            f"v{self.schema_version}, correlation={self.correlation_id}, "
+            f"causation={self.causation_id}, metadata={self.metadata})"
         )
 
 
-class CarBuilder(ABC):
-    car: Car
+class EventBuilder(ABC):
+    event: Event
 
-    def build(self) -> Car:
-        return self.car
-
-    @abstractmethod
-    def with_gps(self) -> Self: ...
+    def build(self) -> Event:
+        return self.event
 
     @abstractmethod
-    def with_color(self, color: Color) -> Self: ...
+    def with_metadata(self, key: str, value: str) -> Self: ...
+
+    @abstractmethod
+    def correlated_to(self, correlation_id: str) -> Self: ...
+
+    @abstractmethod
+    def caused_by(self, prior: Event) -> Self: ...
 
 
-class TaxiBuilder(CarBuilder):
-    def __init__(self) -> None:
-        self.car = Car(engine=Engine.GAS, chassis=Chassis.TAXI, wheels=4)
+class DomainEventBuilder(EventBuilder):
+    """Builds internal events for a single bounded context."""
 
-    def with_gps(self) -> Self:
-        self.car.gps = True
+    def __init__(self, event_type: EventType, payload: dict[str, Any]) -> None:
+        self.event = Event(
+            event_type=event_type,
+            payload=payload,
+            source="orders-service",
+        )
+
+    def with_metadata(self, key: str, value: str) -> Self:
+        self.event.metadata[key] = value
         return self
 
-    def with_color(self, color: Color) -> Self:
-        self.car.color = color
+    def correlated_to(self, correlation_id: str) -> Self:
+        self.event.correlation_id = correlation_id
+        return self
+
+    def caused_by(self, prior: Event) -> Self:
+        self.event.causation_id = prior.event_id
+        self.event.correlation_id = prior.correlation_id
         return self
 
 
-class SportsCarBuilder(CarBuilder):
-    def __init__(self) -> None:
-        self.car = Car(engine=Engine.DIESEL, chassis=Chassis.SPORTS_CAR, wheels=4)
+class IntegrationEventBuilder(EventBuilder):
+    """Builds public events shared across services, so a schema version is required."""
 
-    def build(self) -> Car:
-        return self.car
+    def __init__(
+        self, event_type: EventType, payload: dict[str, Any], schema_version: int
+    ) -> None:
+        self.event = Event(
+            event_type=event_type,
+            payload=payload,
+            source="orders-service.public",
+            schema_version=schema_version,
+        )
+        self.event.metadata["content-type"] = "application/json"
 
-    def with_gps(self) -> Self:
-        self.car.gps = True
+    def with_metadata(self, key: str, value: str) -> Self:
+        self.event.metadata[key] = value
         return self
 
-    def with_color(self, color: Color) -> Self:
-        self.car.color = color
+    def correlated_to(self, correlation_id: str) -> Self:
+        self.event.correlation_id = correlation_id
         return self
 
-
-class CarDirector:
-    def __init__(self, builder: CarBuilder):
-        self.builder = builder
-
-    def build_taxi(self) -> Car:
-        return self.builder.with_color(Color.YELLOW).build()
-
-    def build_sports_car(self) -> Car:
-        return self.builder.with_gps().with_color(Color.RED).build()
+    def caused_by(self, prior: Event) -> Self:
+        self.event.causation_id = prior.event_id
+        self.event.correlation_id = prior.correlation_id
+        return self
 
 
 if __name__ == "__main__":
-    print("Example using director class: ")
-    sports_car_builder = SportsCarBuilder()
-    sports_car = CarDirector(sports_car_builder).build_sports_car()
-    print(sports_car)
+    print("Domain event: ")
+    first_event = (
+        DomainEventBuilder(EventType.ORDER_PLACED, {"order_id": 42, "total": 99.90})
+        .correlated_to("corr-abc-123")
+        .with_metadata("trace-id", "corr-abc-123")
+        .build()
+    )
+    print(first_event)
     print()
-    print("Example using builder directly: ")
-    taxi_builder = TaxiBuilder()
-    taxi = taxi_builder.with_color(Color.YELLOW).build()
-    print(taxi)
+    print("Integration event caused by the domain event: ")
+    payment_event = (
+        IntegrationEventBuilder(
+            EventType.PAYMENT_CAPTURED,
+            {"order_id": 42, "amount": 99.90},
+            schema_version=2,
+        )
+        .caused_by(first_event)
+        .with_metadata("partition-key", "order-42")
+        .build()
+    )
+    print(payment_event)

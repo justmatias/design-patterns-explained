@@ -6,6 +6,9 @@ authors = [{ name = "Matias Gimenez", email = "matiasgimenez.dev@gmail.com" }]
 readme = "README.md"
 license = { text = "MIT" }
 requires-python = ">=3.12"
+dependencies = [
+    "pydantic>=2.13.4",
+]
 
 [project.urls]
 Repository = "https://github.com/justmatias/design-patterns-explained"
