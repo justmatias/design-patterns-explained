@@ -218,10 +218,14 @@ class Event(BaseModel):
 
 
 class EventBuilder(ABC):
-    event: Event
+    _event: Event
+
+    @property
+    def event(self) -> Event:
+        return self._event
 
     def build(self) -> Event:
-        return self.event
+        return self._event
 
     @abstractmethod
     def with_metadata(self, key: str, value: str) -> Self: ...
@@ -237,23 +241,23 @@ class DomainEventBuilder(EventBuilder):
     """Builds internal events for a single bounded context."""
 
     def __init__(self, event_type: EventType, payload: dict[str, Any]) -> None:
-        self.event = Event(
+        self._event = Event(
             event_type=event_type,
             payload=payload,
             source="orders-service",
         )
 
     def with_metadata(self, key: str, value: str) -> Self:
-        self.event.metadata[key] = value
+        self._event.metadata[key] = value
         return self
 
     def correlated_to(self, correlation_id: str) -> Self:
-        self.event.correlation_id = correlation_id
+        self._event.correlation_id = correlation_id
         return self
 
     def caused_by(self, prior: Event) -> Self:
-        self.event.causation_id = prior.event_id
-        self.event.correlation_id = prior.correlation_id
+        self._event.causation_id = prior.event_id
+        self._event.correlation_id = prior.correlation_id
         return self
 
 
@@ -263,25 +267,25 @@ class IntegrationEventBuilder(EventBuilder):
     def __init__(
         self, event_type: EventType, payload: dict[str, Any], schema_version: int
     ) -> None:
-        self.event = Event(
+        self._event = Event(
             event_type=event_type,
             payload=payload,
             source="orders-service.public",
             schema_version=schema_version,
         )
-        self.event.metadata["content-type"] = "application/json"
+        self._event.metadata["content-type"] = "application/json"
 
     def with_metadata(self, key: str, value: str) -> Self:
-        self.event.metadata[key] = value
+        self._event.metadata[key] = value
         return self
 
     def correlated_to(self, correlation_id: str) -> Self:
-        self.event.correlation_id = correlation_id
+        self._event.correlation_id = correlation_id
         return self
 
     def caused_by(self, prior: Event) -> Self:
-        self.event.causation_id = prior.event_id
-        self.event.correlation_id = prior.correlation_id
+        self._event.causation_id = prior.event_id
+        self._event.correlation_id = prior.correlation_id
         return self
 ```
 
