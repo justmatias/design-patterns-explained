@@ -44,6 +44,8 @@ Patterns are organized by category. Each pattern lives in its own folder contain
 ```
 creational/
 ├── builder/
+│   ├── assets/          # images referenced in index.md
+│   ├── __init__.py
 │   ├── builder.py       # real-world example
 │   ├── conceptual.py    # abstract/generic implementation
 │   └── index.md         # documentation page
@@ -53,7 +55,7 @@ creational/
     └── ...
 ```
 
-When adding a new pattern, follow the same structure and use `template.md` as a starting point for the documentation page.
+When adding a new pattern, follow the same structure and use `docs/TEMPLATE.md` as a starting point for the documentation page.
 
 ## Making Changes
 
@@ -79,6 +81,12 @@ When adding a new pattern, follow the same structure and use `template.md` as a 
     ```
 
 5. **Create a pull request**: Go to the original repository and open a pull request with a clear description of your changes.
+
+## Documentation Preview
+
+Opening a pull request automatically triggers a preview deployment of the docs site via Cloudflare Pages. A bot will post a comment on the PR with the preview URL once the build completes — no extra steps needed.
+
+The preview is built from the PR branch and served at a temporary URL independent of the production site. It is updated automatically on every new commit pushed to the branch. The production site on GitHub Pages is unaffected.
 
 ## Code Style
 

@@ -131,3 +131,6 @@ logs
 
 # Ruff
 .ruff_cache
+
+# Jekyll build output
+_site/

@@ -18,7 +18,16 @@ aux_links:
 
 nav_sort: order
 
+defaults:
+  - scope:
+      path: ""
+      type: "pages"
+    values:
+      layout: "default"
+
 exclude:
   - README.md
   - CONTRIBUTING.md
   - docs/
+  - Gemfile
+  - Gemfile.lock

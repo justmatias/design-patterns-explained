@@ -10,7 +10,7 @@ The **builder** pattern separates the construction of a complex object from its 
 
 It provides an elegant solution to the problem of creating complex objects with multiple components.
 
-![image](https://github.com/user-attachments/assets/3906e7a5-642d-444e-ad13-69bd4633ea44)
+![image](assets/builder.png)
 
 ## Introduction
 
@@ -67,7 +67,7 @@ The **builder** pattern typically involves the following components.
 - ✓ More control over the construction process compared to other creational patterns.
 - ✓ Supports constructing objects step-by-step.
 - ✓ Can construct objects that require a complex assembly of sub-objects.
-- ✓ Single Responsibility Principle. You can isolate complex construction code from the business logic of the product.
+- ✓ _Single Responsibility Principle_ (SRP) — You can isolate complex construction code from the business logic of the product.
 - ✗ The overall complexity of the code can increase since the pattern requires creating multiple new classes.
 
 ## Examples
@@ -75,9 +75,6 @@ The **builder** pattern typically involves the following components.
 ### Conceptual
 
 A minimal implementation showing all components — `Product`, `Builder` interface, `ConcreteBuilder`, and `Director`.
-
-<details markdown="1">
-<summary>Show class diagram</summary>
 
 ```mermaid
 classDiagram
@@ -104,9 +101,8 @@ classDiagram
     ConcreteBuilder ..> Product : creates
 ```
 
-</details>
-
-<br>
+<details markdown="1">
+<summary>Show conceptual implementation</summary>
 
 ```python
 from abc import ABC, abstractmethod
@@ -120,25 +116,21 @@ parts: list[str] = field(default_factory=list)
         self.parts.append(part)
 
 class Builder(ABC):
-@property
-@abstractmethod
-def product(self) -> Product:
-pass
+    @property
+    @abstractmethod
+    def product(self) -> Product: ...
 
     @abstractmethod
-    def produce_part_a(self) -> None:
-        pass
+    def produce_part_a(self) -> None: ...
 
     @abstractmethod
-    def produce_part_b(self) -> None:
-        pass
+    def produce_part_b(self) -> None: ...
 
     @abstractmethod
-    def produce_part_c(self) -> None:
-        pass
+    def produce_part_c(self) -> None: ...
 
 class ConcreteBuilder(Builder):
-\_product: Product
+    _product: Product
 
     def __init__(self) -> None:
         self.reset()
@@ -175,98 +167,126 @@ builder: Builder
 
 ```
 
+</details>
+
 ### Real-world
 
-A car factory where `TaxiBuilder` and `SportsCarBuilder` produce different `Car` configurations, with an optional `CarDirector` to orchestrate common builds.
+In an event-driven system, every message is wrapped in an _event envelope_: the
+payload plus a long tail of optional metadata — correlation and causation IDs for
+tracing, schema versions, transport headers. A constructor with all of these as
+optional arguments quickly becomes unreadable, and forgetting to propagate a
+correlation ID breaks distributed tracing.
+
+`DomainEventBuilder` (internal events) and `IntegrationEventBuilder` (public,
+schema-versioned events) build different `Event` envelopes from the same fluent
+interface. The `caused_by` step encapsulates a rule that is easy to get wrong by
+hand: a follow-up event inherits the prior event's correlation ID. Here the
+client drives the builders directly, without a director.
 
 ```python
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
-from enum import Enum, auto
-from typing import Self
+from datetime import UTC, datetime
+from enum import StrEnum
+from typing import Any, Self
+from uuid import UUID, uuid4
+
+from pydantic import BaseModel, Field
 
 
-class Engine(Enum):
-    GAS = auto()
-    DIESEL = auto()
+class EventType(StrEnum):
+    ORDER_PLACED = "OrderPlaced"
+    PAYMENT_CAPTURED = "PaymentCaptured"
 
 
-class Chassis(Enum):
-    TAXI = auto()
-    SPORTS_CAR = auto()
-
-
-class Color(Enum):
-    RED = auto()
-    YELLOW = auto()
-    BLACK = auto()
-
-
-@dataclass
-class Car:
-    engine: Engine
-    chassis: Chassis
-    wheels: int
-    color: Color | None = Color.BLACK
-    gps: bool | None = False
+class Event(BaseModel):
+    event_type: EventType
+    payload: dict[str, Any]
+    event_id: UUID = Field(default_factory=uuid4)
+    occurred_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    source: str
+    correlation_id: str | None = None
+    causation_id: UUID | None = None
+    schema_version: int = 1
+    metadata: dict[str, str] = Field(default_factory=dict)
 
     def __str__(self) -> str:
         return (
-            f"Car with engine: {self.engine}, chassis: {self.chassis}, "
-            f"wheels: {self.wheels}, color: {self.color}, gps: {self.gps}"
+            f"{self.event_type} (id={self.event_id}, source={self.source}, "
+            f"v{self.schema_version}, correlation={self.correlation_id}, "
+            f"causation={self.causation_id}, metadata={self.metadata})"
         )
 
 
-class CarBuilder(ABC):
-    car: Car
+class EventBuilder(ABC):
+    _event: Event
 
-    def build(self) -> Car:
-        return self.car
+    @property
+    def event(self) -> Event:
+        return self._event
+
+    def build(self) -> Event:
+        return self._event
 
     @abstractmethod
-    def with_gps(self) -> Self:
-        pass
+    def with_metadata(self, key: str, value: str) -> Self: ...
 
     @abstractmethod
-    def with_color(self, color: Color) -> Self:
-        pass
+    def correlated_to(self, correlation_id: str) -> Self: ...
+
+    @abstractmethod
+    def caused_by(self, prior: Event) -> Self: ...
 
 
-class TaxiBuilder(CarBuilder):
-    def __init__(self) -> None:
-        self.car = Car(engine=Engine.GAS, chassis=Chassis.TAXI, wheels=4)
+class DomainEventBuilder(EventBuilder):
+    """Builds internal events for a single bounded context."""
 
-    def with_gps(self) -> Self:
-        self.car.gps = True
+    def __init__(self, event_type: EventType, payload: dict[str, Any]) -> None:
+        self._event = Event(
+            event_type=event_type,
+            payload=payload,
+            source="orders-service",
+        )
+
+    def with_metadata(self, key: str, value: str) -> Self:
+        self._event.metadata[key] = value
         return self
 
-    def with_color(self, color: Color) -> Self:
-        self.car.color = color
+    def correlated_to(self, correlation_id: str) -> Self:
+        self._event.correlation_id = correlation_id
+        return self
+
+    def caused_by(self, prior: Event) -> Self:
+        self._event.causation_id = prior.event_id
+        self._event.correlation_id = prior.correlation_id
         return self
 
 
-class SportsCarBuilder(CarBuilder):
-    def __init__(self) -> None:
-        self.car = Car(engine=Engine.DIESEL, chassis=Chassis.SPORTS_CAR, wheels=4)
+class IntegrationEventBuilder(EventBuilder):
+    """Builds public events shared across services, so a schema version is required."""
 
-    def with_gps(self) -> Self:
-        self.car.gps = True
+    def __init__(
+        self, event_type: EventType, payload: dict[str, Any], schema_version: int
+    ) -> None:
+        self._event = Event(
+            event_type=event_type,
+            payload=payload,
+            source="orders-service.public",
+            schema_version=schema_version,
+        )
+        self._event.metadata["content-type"] = "application/json"
+
+    def with_metadata(self, key: str, value: str) -> Self:
+        self._event.metadata[key] = value
         return self
 
-    def with_color(self, color: Color) -> Self:
-        self.car.color = color
+    def correlated_to(self, correlation_id: str) -> Self:
+        self._event.correlation_id = correlation_id
         return self
 
-
-class CarDirector:
-    def __init__(self, builder: CarBuilder):
-        self.builder = builder
-
-    def build_taxi(self) -> Car:
-        return self.builder.with_color(Color.YELLOW).build()
-
-    def build_sports_car(self) -> Car:
-        return self.builder.with_gps().with_color(Color.RED).build()
+    def caused_by(self, prior: Event) -> Self:
+        self._event.causation_id = prior.event_id
+        self._event.correlation_id = prior.correlation_id
+        return self
 ```
 
 ## References

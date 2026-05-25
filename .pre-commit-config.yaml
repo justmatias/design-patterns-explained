@@ -33,7 +33,11 @@ repos:
       - id: pylint
         stages:
           - pre-commit
+        additional_dependencies:
+          - pydantic
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v2.1.0
     hooks:
       - id: mypy
+        additional_dependencies:
+          - pydantic
