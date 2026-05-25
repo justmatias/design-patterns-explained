@@ -67,7 +67,7 @@ The **builder** pattern typically involves the following components.
 - ✓ More control over the construction process compared to other creational patterns.
 - ✓ Supports constructing objects step-by-step.
 - ✓ Can construct objects that require a complex assembly of sub-objects.
-- ✓ Single Responsibility Principle (SRP) - You can isolate complex construction code from the business logic of the product.
+- ✓ _Single Responsibility Principle_ (SRP) — You can isolate complex construction code from the business logic of the product.
 - ✗ The overall complexity of the code can increase since the pattern requires creating multiple new classes.
 
 ## Examples

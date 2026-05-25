@@ -6,36 +6,37 @@ nav_order: 4
 
 # Factory Method
 
-The **Factory Method** pattern provides an interface for creating objects in a superclass, but allows subclasses to decide which class to instantiate. Also known as the _Virtual Constructor_, it defers the responsibility of object creation to subclasses.
+The **Factory Method** pattern provides an interface for creating objects in a superclass, but allows subclasses to alter the type of objects that will be created. The creation the responsibility is deferred to subclasses.
 
 ![image](assets/factory-method.png)
 
 ## Introduction
 
-Imagine you are building a logistics application that initially only supports truck deliveries. Your entire codebase is coupled to the `Truck` class. Later, a new requirement arrives: the app must also handle sea transport.
+Imagine a codebase where a high-level component is directly coupled to a specific, concrete implementation class.
 
-> **How do you add new transport types without touching all the existing creation code?**
+> **How do you introduce new, alternative implementation types without rewriting the existing creation code across the application?**
 
-The **Factory Method** pattern solves this by replacing direct object instantiation (`Truck()`) with a call to a special _factory method_. Subclasses override this method to return the concrete type they know about — `Truck`, `Ship`, or anything else — while client code only depends on the shared interface.
+Directly instantiating concrete classes creates a rigid dependency chain. When requirements expand to demand variant behaviors, you are forced to locate and modify every instance where the original object was hardcoded.
+
+The **Factory Method** pattern solves this by replacing direct object instantiation with a call to a special _factory method_. Subclasses override this method to return the concrete type they know about while client code only depends on the shared interface.
 
 This separates the _decision of what to create_ from the _logic that uses what was created_, keeping each class focused on a single responsibility.
 
 ## How to recognize a factory method pattern implementation?
 
-The **Factory Method** pattern can be recognized when a base class declares a method whose sole purpose is to return a new object, and subclasses override that method to change the concrete type being returned. The rest of the creator class uses only the common interface, never the concrete product type.
+The **Factory Method** pattern can be recognized when a base class declares a method whose sole purpose is to return a new object conforming to a specific interface, and subclasses override that method to change the concrete type being returned. The rest of the creator class uses only the common interface, never the concrete product type.
 
 It differs from a plain static factory function: here, inheritance is the mechanism that drives variation, not branching logic inside a single method.
 
 ### Real world analogy
 
-Consider a staffing agency that assigns workers to job sites. The agency (creator) defines the process: screen candidates, arrange onboarding, assign tasks. But the _type_ of worker it provides — electrician, plumber, carpenter — depends on which branch (concrete creator) fulfils the request. The client just asks for "a worker" and trusts the agency to send the right one.
+Think of a coffee shop. Every drink follows the same routine: grab a cup, pull a shot of espresso, add the milk component, top it off, hand it over. The "milk component" step is left blank in the master routine. The latte station fills it in with steamed milk. The cappuccino station fills it in with foam. The macchiato station fills it in with just a dollop. The customer orders a drink and gets one — they don't care which station made it, and the shop can add a new drink tomorrow without rewriting the whole process.
 
 ## How to know if you can apply the pattern in your project?
 
 A **Factory Method** is a good fit when:
 
 - You want a class to delegate the instantiation of its dependencies to subclasses, because it cannot predict the exact class it needs to create.
-- You need users of a framework or library to be able to extend its internal components by subclassing, without modifying the original code.
 - You want to centralize creation logic so that when a new variant is needed, only one method needs to change, and none of the usage code does.
 - You are managing a pool of reusable resources (connections, workers) where the exact type returned can vary but the lifecycle management stays the same.
 
@@ -47,7 +48,7 @@ The **Factory Method** pattern typically involves the following components.
 
 - **Concrete Products**. The actual implementations of the product interface. Each represents a distinct variant the system knows how to build.
 
-- **Creator**. An abstract class that declares the factory method. It may also contain a default implementation of the factory method. Importantly, it uses the factory method internally to build and work with products — the creator's business logic never depends on a concrete product class.
+- **Creator**. An abstract class that declares the factory method. It may also contain a default implementation of the factory method. Importantly, it uses the factory method internally to build and work with products. The creator's business logic never depends on a concrete product class.
 
 - **Concrete Creators**. Subclasses of `Creator` that override the factory method to return a specific `ConcreteProduct`. A concrete creator is the only place that knows which class to instantiate.
 
@@ -58,7 +59,6 @@ The **Factory Method** pattern typically involves the following components.
 - ✓ Decouples client code from concrete product classes, reducing coupling.
 - ✓ Makes it easy to swap or extend what gets created without changing how it's used.
 - ✗ Requires creating a new `ConcreteCreator` subclass for every new product type, which can grow the class hierarchy.
-- ✗ Can be over-engineered for simple cases where a single product type is unlikely to change.
 
 ## Examples
 
@@ -214,6 +214,6 @@ class PushService(NotificationService):
 
 - 📚 [Factory Method — Refactoring Guru](https://refactoring.guru/design-patterns/factory-method)
 - 📚 [Factory Method in Python — Refactoring Guru](https://refactoring.guru/design-patterns/factory-method/python/example)
-- 📚 [Design Patterns in Python: Factory Method](https://medium.com/@amirm.lavasani/design-patterns-in-python-factory-method-fd0f9e02bb43)
+- 📚 [Factory method Design Pattern](https://www.geeksforgeeks.org/system-design/factory-method-for-designing-pattern)
 - 📼 [Factory Method Pattern – Design Patterns](https://youtu.be/EcFVTgRHJLM)
 - 📼 [Factory Method Design Pattern Explained in 10 Minutes](https://youtu.be/s_4ZrtQs8Do)
