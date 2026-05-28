@@ -20,7 +20,7 @@ Hardcoding concrete widget classes means that adding a new platform (or switchin
 
 The **Abstract Factory** pattern solves this by grouping the creation of related objects behind a single interface. The factory guarantees that every object it produces belongs to the same family. Client code only talks to the abstract factory and the abstract product interfaces, so swapping an entire family is a matter of changing which factory is injected.
 
-This separates _which family to create_ from _how those objects are used_, enforcing consistency across a product family.
+This separates _which family to create_ from _how those objects are used_, leaving consistency guarantees inside the factory rather than scattered across client code.
 
 ## How to recognize an abstract factory pattern implementation?
 
@@ -30,13 +30,13 @@ It differs from **Factory Method**: Factory Method uses inheritance to let subcl
 
 ### Real world analogy
 
-Think of a furniture store that sells collections: the _Scandinavian_ collection and the _Victorian_ collection. Each collection has a chair, a sofa, and a coffee table. You can order the full Scandinavian set or the full Victorian set, but you would never mix a Victorian sofa with a Scandinavian chair — they would clash. The catalog acts as the abstract factory: you pick a collection upfront, and every piece you receive belongs to that family.
+Think of an automotive assembly plant with two production lines: a luxury model line and an economy model line. Each line produces an engine, a transmission, and an interior package — engineered as a matched unit. The tolerances, power ratings, and finish specifications are designed to work together. The production scheduler decides which line to run; every component that rolls off that line belongs to its family, and no one reaches across lines mid-build.
 
 ## How to know if you can apply the pattern in your project?
 
 An **Abstract Factory** is a good fit when:
 
-- You need to create families of related objects and you must guarantee they are always used together.
+- You have families of related objects where mixing products across families would break correctness — the types may allow it at compile time, but the semantics do not.
 - You want to switch the entire product family at runtime (or configuration time) without touching the client code.
 - You want to enforce constraints — e.g., every UI widget must come from the same platform theme — and catch violations at compile time rather than runtime.
 
@@ -59,7 +59,7 @@ The **Abstract Factory** pattern typically involves the following components.
 - ✓ Guarantees that products from the same factory are compatible with each other.
 - ✓ Open/Closed Principle. Introducing a new product family requires adding a new concrete factory without modifying existing code.
 - ✓ Single Responsibility Principle. Product creation is centralized inside each concrete factory.
-- ✓ Eliminates platform-specific code from the client — just inject a different factory.
+- ✓ Client code references no platform-specific classes — all concrete types are hidden inside the factory.
 - ✗ Adding a new product _type_ (a new method on the abstract factory) requires updating every concrete factory, which can be disruptive.
 - ✗ Can introduce a large number of classes when there are many product types and families.
 

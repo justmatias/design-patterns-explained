@@ -106,11 +106,7 @@ if __name__ == "__main__":
 
     os_name = sys.argv[1] if len(sys.argv) > 1 else "windows"
 
-    factory: UIFactory
-    if os_name == "macos":
-        factory = MacOSUIFactory()
-    else:
-        factory = WindowsUIFactory()
+    factory: UIFactory = MacOSUIFactory() if os_name == "macos" else WindowsUIFactory()
 
     app = Application(factory)
     app.render()
