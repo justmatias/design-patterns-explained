@@ -17,6 +17,7 @@ Understanding design patterns makes you a better communicator too. When a teamma
 - [Singleton](./creational/singleton/) — Only one existing instance of a class
 - [Prototype](./creational/prototype/) — Create new objects by copying an existing object
 - [Factory Method](./creational/factory-method/) — Delegate object creation to subclasses via a factory method
+- [Abstract Factory](./creational/abstract-factory/) — Create families of related objects without specifying their concrete classes
 
 ## [Structural Patterns](./structural/)
 

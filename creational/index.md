@@ -16,3 +16,4 @@ Creational patterns solve this by moving the responsibility of object creation b
 - [Singleton](./singleton/) — Only one existing instance of a class
 - [Prototype](./prototype/) — Create new objects by copying an existing object
 - [Factory Method](./factory-method/) — Delegate object creation to subclasses via a factory method
+- [Abstract Factory](./abstract-factory/) — Create families of related objects without specifying their concrete classes
